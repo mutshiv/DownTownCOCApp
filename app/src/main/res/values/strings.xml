@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Down Town COC</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="sermon_video">www.pdtcoc.co.za/joomla30/sermon_video</string>
+    <string name="sermon_audio">www.pdtcoc.co.za/joomla30/sermon_audio</string>
+    <string name="msg">Message (min 10 characters)</string>
+    <string name="btnPush">Send Notification</string>
+    <string name="location">Venue (Location)</string>
+
+    <string-array name="events">
+        <item>Swift Training</item>
+        <item>Down Town CoC App Launch</item>
+        <item>Youth Day</item>
+    </string-array>
+    <string-array name="notices_list">
+        <item>Announcement</item>
+        <item>Event Notice</item>
+        <item>Reminder</item>
+    </string-array>
+    <string name="title_activity_preferences">PreferencesActivity</string>
+    <string name="action_settings">Settings</string>
+</resources>

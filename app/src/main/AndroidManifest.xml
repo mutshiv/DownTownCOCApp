@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="org.downtowncoc">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_CALENDAR" />
+    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <application
+        android:name=".app.DownTownCoCApp"
+        android:allowBackup="true"
+        android:icon="@drawable/android_icon_72x72"
+        android:label="@string/app_name"
+        android:roundIcon="@drawable/android_icon_36x36"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".activities.SplashScreenActivity"
+            android:theme="@style/NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activities.HomeActivity"
+            android:icon="@drawable/android_icon_36x36" />
+        <activity
+            android:name=".activities.BibleActivity"
+            android:icon="@drawable/bible_icon"
+            android:parentActivityName=".activities.HomeNewActivity" />
+        <activity
+            android:name=".activities.VisionMissionActivity"
+            android:icon="@drawable/about_us"
+            android:label="About Us"
+            android:parentActivityName=".activities.HomeNewActivity" />
+        <activity
+            android:name=".activities.FragmentsActivity"
+            android:icon="@drawable/android_icon_36x36"
+            android:parentActivityName=".activities.HomeNewActivity" />
+
+        <service
+            android:name=".services.PDTService"
+            android:enabled="true"
+            android:exported="false" />
+
+        <activity
+            android:name=".activities.HomeNewActivity"
+            android:icon="@drawable/android_icon_36x36"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".activities.PreferencesActivity"
+            android:label="@string/title_activity_preferences"
+            android:theme="@style/AppTheme"></activity>
+    </application>
+
+</manifest>

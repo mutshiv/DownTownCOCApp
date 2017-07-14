@@ -1,0 +1,57 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="org.downtowncoc.fragments.CalendarFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <CalendarView
+            android:id="@+id/calendarView"
+            android:layout_width="match_parent"
+            android:layout_height="320dp"
+            android:layout_weight="1"
+            android:firstDayOfWeek="1"
+            android:focusable="true"
+            android:focusedMonthDateColor="@android:color/black"
+            android:longClickable="true"
+            android:selectedDateVerticalBar="@color/colorAccent"
+            android:selectedWeekBackgroundColor="@android:color/background_light"
+            android:showWeekNumber="false"
+            android:unfocusedMonthDateColor="?attr/colorButtonNormal"
+            android:weekSeparatorLineColor="@android:color/holo_blue_bright"/>
+
+        <ListView
+            android:id="@+id/lv_events"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/calendarView"
+            android:layout_weight="2" />
+
+        <TextView
+            android:id="@+id/eventTag"
+            android:text="Events"
+            android:layout_above="@+id/lv_events"
+            android:textSize="30dp"
+            android:background="@color/colorPrimary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/btn_add_event"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/calendarView"
+            android:layout_marginBottom="50dp"
+            android:background="@drawable/circle_bg"
+            android:text="+"
+            android:textSize="25dp"
+            android:visibility="invisible" />
+
+    </RelativeLayout>
+</FrameLayout>
