@@ -2,7 +2,9 @@ package org.downtowncoc.activities;
 
 import android.Manifest;
 import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.provider.CalendarContract;
@@ -21,6 +23,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.downtowncoc.R;
 import org.downtowncoc.prefs.Constants;
@@ -56,6 +59,7 @@ public class HomeNewActivity extends AppCompatActivity {
     ImageView imgHome;
 
     private Intent intent;
+    private static SharedPreferences mSharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +69,14 @@ public class HomeNewActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         viewEvents(new CalendarView(this));
+        mSharedPreferences = (getApplication()).getSharedPreferences(Constants.MY_PREF, Context.MODE_PRIVATE);
+
+        boolean stream_mode = mSharedPreferences.getBoolean(Constants.WIFI_SYNC, false);
+
+        if(!stream_mode)
+        {
+            Toast.makeText(this, "Current connection is over Mobile data, select Wi-fi if available", Toast.LENGTH_LONG).show();
+        }
     }
 
     @OnClick(R.id.aboutUs)
@@ -180,7 +192,6 @@ public class HomeNewActivity extends AppCompatActivity {
             case R.id.action_settings :
                 intent = new Intent(this, PreferencesActivity.class);
                 startActivity(intent);
-                Log.d(LOG_TAG, "Bible view menu item clicked");
                 return true;
         }
 

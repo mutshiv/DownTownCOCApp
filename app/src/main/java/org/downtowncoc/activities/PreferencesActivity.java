@@ -27,6 +27,8 @@ public class PreferencesActivity extends AppCompatActivity {
         mSharedPreferences = (getApplication()).getSharedPreferences(Constants.MY_PREF, Context.MODE_PRIVATE);
 
         getFragmentManager().beginTransaction().replace(R.id.prefs_content, new PrefsFragment()).commit();
+
+        getSupportActionBar().setTitle("Settings");
     }
 
     public static class PrefsFragment extends PreferenceFragment
@@ -35,6 +37,7 @@ public class PreferencesActivity extends AppCompatActivity {
         public void onCreate(@Nullable Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.preferences);
+
 
             final SwitchPreference useWifi = ((SwitchPreference)findPreference("over_wifi"));
 
@@ -46,21 +49,20 @@ public class PreferencesActivity extends AppCompatActivity {
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     if(preference.isEnabled() && newValue.equals(true))
                     {
-                        preference.setTitle("Over Wifi only");
+                        preference.setTitle("Stream over Wi-fi");
                         mSharedPreferences.edit().putBoolean(Constants.WIFI_SYNC, true).commit();
                         Log.d(LOG_TAG, mSharedPreferences.getBoolean(Constants.WIFI_SYNC, preference.isEnabled()) + " Use wifi " + newValue);
                         return true;
                     }
                     else
                     {
-                        preference.setTitle("Stream over Wi-fi");
+                        preference.setTitle("Stream using Mobile Data");
                         mSharedPreferences.edit().putBoolean(Constants.WIFI_SYNC, false).commit();
                         Log.d(LOG_TAG, mSharedPreferences.getBoolean(Constants.WIFI_SYNC, preference.isEnabled()) + " Use Mobile data " + newValue);
                         return true;
                     }
                 }
             });
-
         }
     }
 }

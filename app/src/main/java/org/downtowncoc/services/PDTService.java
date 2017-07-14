@@ -10,7 +10,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.IBinder;
+import android.os.Vibrator;
 import android.provider.CalendarContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
@@ -175,6 +179,14 @@ public class PDTService extends Service
 
                            NotificationManager mNotificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
                            mNotificationManager.notify(1, mBuilder.build());
+
+                           Uri notification = RingtoneManager.getActualDefaultRingtoneUri(PDTService.this, RingtoneManager.TYPE_NOTIFICATION);
+
+                           Ringtone ringtone = RingtoneManager.getRingtone(PDTService.this, notification);
+                           ringtone.play();
+
+                           Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+                           vibrator.vibrate(1000);
                        }
                     }
                     catch (JSONException e)

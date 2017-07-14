@@ -6,6 +6,8 @@
     <uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-permission android:name="android.permission.WRITE_CALENDAR" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name=".app.DownTownCoCApp"
@@ -53,7 +55,21 @@
         <activity
             android:name=".activities.PreferencesActivity"
             android:label="@string/title_activity_preferences"
-            android:theme="@style/AppTheme"></activity>
+            android:parentActivityName=".activities.HomeNewActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.downtowncoc.activities.HomeNewActivity" />
+        </activity>
+
+        <receiver
+            android:name=".receivers.NetworkSettingsReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
