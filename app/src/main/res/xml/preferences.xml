@@ -2,13 +2,13 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory
-        android:title="Network Settings"
-        android:summary="Network Settings">
+        android:summary="Network Settings"
+        android:title="Network Settings">
         <SwitchPreference
             android:background="#FF6CABF2"
-            android:textColor="@android:color/white"
             android:defaultValue="false"
             android:key="over_wifi"
+            android:textColor="@android:color/white"
             android:title="Stream over Wi-fi" />
     </PreferenceCategory>
 </PreferenceScreen>

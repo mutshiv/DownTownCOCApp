@@ -4,6 +4,7 @@ import android.provider.BaseColumns;
 
 /**
  * Created by vmutshinya on 5/27/2017.
+ * ${PACKAGE_NAME}
  */
 
 public class Constants
@@ -24,6 +25,8 @@ public class Constants
             "Effectively implementing programs and ministries for the glory of Christ";
 
     public static final String[] dayOfWeek = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+    public static final String NOTICE_SENDING_CODE = "PDTR0m16_16M@t28";
+
     public static final int CALENDAR_FRAGMENT = 1;
     public static final int SERMON_FRAGMENT = 2;
     public static final int AUDIO_SERMON_FRAGMENT = 3;
@@ -50,6 +53,8 @@ public class Constants
     public static final String EVENT_LOCATION = "eventlocation";
 
     public static final String WIFI_SYNC = "use_wifi";
+    public static final String DATA_USAGE = "data_usage";
+    public static final String WIFI_CONNECTED = "wifi_connected";
 
     public static int DATABASE_VERSION = 1;
 

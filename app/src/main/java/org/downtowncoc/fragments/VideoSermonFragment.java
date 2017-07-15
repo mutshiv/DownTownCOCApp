@@ -25,6 +25,8 @@ import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnItemClick;
+import butterknife.OnItemSelected;
 
 public class VideoSermonFragment extends Fragment implements SurfaceHolder.Callback, MediaPlayer.OnPreparedListener
 {
@@ -40,6 +42,8 @@ public class VideoSermonFragment extends Fragment implements SurfaceHolder.Callb
     ListView lv_sermons;
     @BindView(R.id.vSermon)
     VideoView vSermon;
+    private Uri videoUrl;
+    private MediaController mMediaController;
 
     private MediaPlayer mediaPlayer;
     private SurfaceHolder vidHolder;
@@ -67,9 +71,6 @@ public class VideoSermonFragment extends Fragment implements SurfaceHolder.Callb
         View view = inflater.inflate(R.layout.fragment_video_sermon, container, false);
         ButterKnife.bind(this, view);
 
-        String videoUri = Constants.VIDEO_URI + "Rebecca%20Malope%20ft%20Sechaba%20Lona%20Baratang.mp4";
-        Uri vidUri = Uri.parse(videoUri);
-
        new Thread(new Runnable() {
            @Override
            public void run()
@@ -82,38 +83,67 @@ public class VideoSermonFragment extends Fragment implements SurfaceHolder.Callb
                while(!mCursor.isAfterLast())
                {
                    Log.d(LOG_TAG, ""+ mCursor.getString(mCursor.getColumnIndex(Constants.Columns.FILE_NAME_FULL)));
+                   videoUrl = Uri.parse(Constants.VIDEO_URI + mCursor.getString(mCursor.getColumnIndex(Constants.Columns.FILE_NAME_FULL)));
                    mCursor.moveToNext();
                }
            }
        }).start();
 
+        mMediaController = new MediaController(super.getContext());
+        mMediaController.setAnchorView(vSermon);
 
-        Log.d(LOG_TAG, videoUri + " URL");
-        MediaController vidControl = new MediaController(super.getContext());
-        vidControl.setAnchorView(vSermon);
-
-        vSermon.setMediaController(vidControl);
-        vSermon.setVideoURI(vidUri);
-
- /*       try
+        try
         {
-            mediaPlayer = new MediaPlayer();
-            mediaPlayer.setDisplay(vSermon.getHolder());
-            mediaPlayer.setDataSource(Constants.VIDEO_URI);
+            Log.d(LOG_TAG, "videoUrl " + videoUrl + " context: " + VideoSermonFragment.this.getContext());
+//            surfaceCreated(vidHolder);
+            mediaPlayer.setDataSource(VideoSermonFragment.this.getContext(), videoUrl);
             mediaPlayer.prepare();
-            mediaPlayer.setOnPreparedListener(this);
-
-            vSermon.start();
         }
-        catch (IOException e)
-        {
+        catch (IOException e) {
             e.printStackTrace();
-        }*/
+        }
 
-       /* vidHolder = vidSurface.getHolder();
-        vidHolder.addCallback(this);*/
+        mediaPlayer.setOnPreparedListener(VideoSermonFragment.this);
+        vSermon.setMediaController(mMediaController);
+        vSermon.setVideoURI(videoUrl);
 
         return view;
+    }
+
+
+    @OnItemClick(R.id.lv_sermons)
+    public void playSelected(final int position)
+    {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try
+                {
+                    if(!mediaPlayer.isPlaying())
+                    {
+                        mCursor.move(position);
+
+                        videoUrl = Uri.parse(Constants.VIDEO_URI + mCursor.getString(mCursor.getColumnIndex(Constants.Columns.FILE_NAME_FULL)));
+                       /* mediaPlayer.setDataSource(VideoSermonFragment.super.getContext(), videoUrl);
+                        mediaPlayer.prepare();
+                        mediaPlayer.setOnPreparedListener(VideoSermonFragment.this);*/
+                        Log.d(LOG_TAG, "" + mediaPlayer.getDuration());
+                        mediaPlayer.reset();
+                        surfaceCreated(vidHolder);
+                        mediaPlayer.start();
+                        Log.d(LOG_TAG, "Auto click!!! " + mCursor.getString(mCursor.getColumnIndex(Constants.Columns.FILE_NAME_FULL)));
+                    }
+                    else
+                    {
+                        Log.d(LOG_TAG, "Media player on!!! " + mCursor.getString(mCursor.getColumnIndex(Constants.Columns.FILE_NAME_FULL)));
+                    }
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     @Override
@@ -123,10 +153,28 @@ public class VideoSermonFragment extends Fragment implements SurfaceHolder.Callb
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        mediaPlayer.pause();
+    }
+
+    @Override
     public void onPrepared(MediaPlayer mp)
     {
-       // mediaPlayer.start();
-        vSermon.start();
+        vSermon.setMediaController(mMediaController);
+        vSermon.setVideoURI(videoUrl);
+        try
+        {
+            mediaPlayer = new MediaPlayer();
+            mediaPlayer.setDisplay(vSermon.getHolder());
+            mediaPlayer.setDataSource(VideoSermonFragment.this.getContext(), videoUrl);
+//            mediaPlayer.prepare();
+            mediaPlayer.setOnPreparedListener(this);
+            //mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -136,7 +184,7 @@ public class VideoSermonFragment extends Fragment implements SurfaceHolder.Callb
         {
             mediaPlayer = new MediaPlayer();
             mediaPlayer.setDisplay(vSermon.getHolder());
-            mediaPlayer.setDataSource(Constants.VIDEO_URI);
+            mediaPlayer.setDataSource(VideoSermonFragment.this.getContext(), videoUrl);
             mediaPlayer.prepare();
             mediaPlayer.setOnPreparedListener(this);
             //mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -153,6 +201,6 @@ public class VideoSermonFragment extends Fragment implements SurfaceHolder.Callb
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-
+        mediaPlayer.release();
     }
 }
