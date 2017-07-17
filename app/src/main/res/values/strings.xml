@@ -22,4 +22,8 @@
     <string name="title_activity_preferences">PreferencesActivity</string>
     <string name="action_settings">Settings</string>
     <string name="code">Enter Access Code</string>
+    <string name="developer">Developed By: V. Mutshinya</string>
+    <string name="ver">Version 1.0</string>
+    <string name="about">About Application</string>
+    <string name="vision">VISION\n\n</string>
 </resources>

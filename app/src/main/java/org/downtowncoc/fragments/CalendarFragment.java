@@ -10,7 +10,6 @@ import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -63,8 +62,10 @@ public class CalendarFragment extends Fragment {
         cal.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
-                Log.d(LOG_TAG, dayOfMonth + " - " + month);
-                viewEvents(view);
+                Calendar cal = Calendar.getInstance();
+                cal.set(year, month, dayOfMonth);
+
+                viewEvents(cal.getTime());
             }
         });
         return view;
@@ -72,7 +73,6 @@ public class CalendarFragment extends Fragment {
 
     @OnClick(R.id.btn_add_event)
     public void addEvent(View view) {
-        Log.d(LOG_TAG, "Event button clicked");
         Intent calIntent = new Intent(Intent.ACTION_INSERT);
 
         calIntent.setData(CalendarContract.Events.CONTENT_URI);
@@ -82,13 +82,13 @@ public class CalendarFragment extends Fragment {
         calIntent.putExtra(CalendarContract.Events.TITLE, "Event add test");
         calIntent.putExtra(CalendarContract.Events.DESCRIPTION, "This is a sample description");
         calIntent.putExtra(CalendarContract.Events.EVENT_LOCATION, "My Guest House");
-        startActivity(calIntent);
+       // startActivity(calIntent);
     }
 
-    private void viewEvents(CalendarView view) {
+    private void viewEvents(Date calDate) {
         ArrayList<String> eventsList = new ArrayList<>();
 
-        Cursor mCursor = null;
+        Cursor mCursor;
         final String[] projection = new String[]{CalendarContract.Events.TITLE, CalendarContract.Events.DTSTART, CalendarContract.Events.DTEND};
         ContentResolver cr = getContext().getContentResolver();
 
@@ -99,21 +99,24 @@ public class CalendarFragment extends Fragment {
         }
         mCursor = cr.query(CalendarContract.Events.CONTENT_URI, projection, null, null, null);
 
-        while(mCursor.moveToNext())
+        if(mCursor != null)
         {
-            if(processDate(mCursor.getLong(1), view))
+            while(mCursor.moveToNext())
             {
-                GregorianCalendar gCalendar = new GregorianCalendar();
-                gCalendar.setTime(new Date(mCursor.getLong(1)));
-                eventsList.add(mCursor.getString(0) + "\n" + gCalendar.get(Calendar.DATE) + "-" +  gCalendar.get(Calendar.MONTH) + "-" +  gCalendar.get(Calendar.YEAR));
+                if(processDate(mCursor.getLong(1), calDate))
+                {
+                    GregorianCalendar gCalendar = new GregorianCalendar();
+                    gCalendar.setTime(new Date(mCursor.getLong(1)));
+                    eventsList.add(mCursor.getString(0) + "\n" + gCalendar.get(Calendar.DATE) + "-" +  (gCalendar.get(Calendar.MONTH)+1) + "-" +  gCalendar.get(Calendar.YEAR));
+                }
             }
         }
-
+        mCursor.close();
         ArrayAdapter<String> adapter = new ArrayAdapter<>(super.getContext(), android.R.layout.simple_list_item_1, eventsList);
         lv_events.setAdapter(adapter);
     }
 
-    private boolean processDate(long dateTime, CalendarView calView)
+    private boolean processDate(long dateTime, Date calDate)
     {
         Date date = new Date(dateTime);
         GregorianCalendar gCalender = new GregorianCalendar();
@@ -122,20 +125,16 @@ public class CalendarFragment extends Fragment {
         int eventMonth = gCalender.get(Calendar.MONTH);
         int eventYear = gCalender.get(Calendar.YEAR);
 
-        gCalender.setTime(new Date(calView.getDate()));
-        int calendarMonth = gCalender.get(Calendar.MONTH);
-        int calendarYear = gCalender.get(Calendar.YEAR);
+        GregorianCalendar gCalenderView = new GregorianCalendar();
+        gCalenderView.setTime(calDate);
+        int calendarMonth = gCalenderView.get(Calendar.MONTH);
+        int calendarYear = gCalenderView.get(Calendar.YEAR);
 
-        if(eventMonth == calendarMonth && eventYear == calendarYear)
-        {
-            return true;
-        }
-        return false;
+        return ((eventMonth == calendarMonth) && (eventYear == calendarYear));
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        Log.d(LOG_TAG, "Calendar Fragment detached");
     }
 }

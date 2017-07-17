@@ -196,8 +196,7 @@ public class HomeNewActivity extends AppCompatActivity {
         int calendarMonth = gCalender.get(Calendar.MONTH);
         int calendarYear = gCalender.get(Calendar.YEAR);
 
-        if(eventMonth == calendarMonth && eventYear == calendarYear) return true;
-        return false;
+        return ((eventMonth == calendarMonth) && (eventYear == calendarYear));
     }
 
     @Override
@@ -217,6 +216,11 @@ public class HomeNewActivity extends AppCompatActivity {
         {
             case R.id.action_settings :
                 intent = new Intent(this, PreferencesActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.action_about_app :
+                intent = new Intent(this, FragmentsActivity.class);
+                intent.putExtra(Constants.ACTIVE_FRAGMENT, Constants.ABOUT_APP_FRAGMENT);
                 startActivity(intent);
                 return true;
         }

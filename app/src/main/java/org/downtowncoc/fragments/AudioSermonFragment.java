@@ -10,17 +10,14 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SimpleCursorAdapter;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.MediaController;
-import android.widget.VideoView;
 
 import org.downtowncoc.R;
 import org.downtowncoc.database.DataBaseHelper;
@@ -31,7 +28,6 @@ import java.io.IOException;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnItemClick;
-import butterknife.OnItemSelected;
 
 public class AudioSermonFragment extends Fragment implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener, MediaController.MediaPlayerControl, SurfaceHolder.Callback
 {
@@ -49,8 +45,9 @@ public class AudioSermonFragment extends Fragment implements MediaPlayer.OnPrepa
     private MediaController mediaController;
     @BindView(R.id.sv_audio_sermon)
     SurfaceView sv_audio_sermon;
-    Uri soundUri;
 
+    private Uri soundUri;
+    private String downloadUrl;
     private int[] to = {android.R.id.text1};
 
     public AudioSermonFragment() {
@@ -67,7 +64,6 @@ public class AudioSermonFragment extends Fragment implements MediaPlayer.OnPrepa
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_audio_sermon, container, false);
         ButterKnife.bind(this, view);
 
@@ -104,11 +100,12 @@ public class AudioSermonFragment extends Fragment implements MediaPlayer.OnPrepa
 
                         soundUri = Uri.parse(Constants.AUDIO_URI + mCursor.getString(mCursor.getColumnIndex(Constants.Columns.FILE_NAME_FULL)));
                         mediaPlayer.setDataSource(AudioSermonFragment.super.getContext(), soundUri);
-                        mediaPlayer.prepare();
                         mediaPlayer.setOnPreparedListener(AudioSermonFragment.this);
-
+                        mediaPlayer.prepare();
                         mediaPlayer.start();
+
                         Log.d(LOG_TAG, "Auto click!!! " + mCursor.getString(mCursor.getColumnIndex(Constants.Columns.FILE_NAME_FULL)));
+                        downloadUrl =  mCursor.getString(mCursor.getColumnIndex(Constants.Columns.FILE_NAME_FULL));
                     }
                 }
                 catch (IOException e)
@@ -133,11 +130,10 @@ public class AudioSermonFragment extends Fragment implements MediaPlayer.OnPrepa
 
     @Override
     public void onPrepared(MediaPlayer mp) {
- //       mediaPlayer.start();
         mediaController = new MediaController(AudioSermonFragment.this.getContext());
         mediaController.setAnchorView(sv_audio_sermon);
         mediaController.setMediaPlayer(this);
-        mediaController.show(0);
+//        mediaController.show(0);
     }
 
     @Override

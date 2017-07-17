@@ -32,6 +32,7 @@ public class Constants
     public static final int AUDIO_SERMON_FRAGMENT = 3;
     public static final int ANNOUNCEMENTS = 4;
     public static final int NOTICE_VIEW_FRAGMENT = 5;
+    public static final int ABOUT_APP_FRAGMENT = 9;
 
     public static final String ACTIVE_FRAGMENT = "activeFragment";
     public static final String VIDEO_URI = "http://www.pdtcoc.co.za/joomla30/sermon_video/";

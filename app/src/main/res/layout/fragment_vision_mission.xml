@@ -1,5 +1,4 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,17 +6,15 @@
     android:transcriptMode="alwaysScroll"
     tools:context="org.downtowncoc.activities.VisionMissionActivity">
 
-    <!-- TODO: Update blank fragment layout -->
-
     <TextView
         android:id="@+id/tvVision"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="@color/colorPrimary"
+        android:background="@color/genericBlue"
         android:ems="1"
         android:scrollbars="vertical"
-        android:text="VISION\n\n"
+        android:text="@string/vision"
         android:textColor="@color/colorAccent"
         android:textSize="20sp" />
 
