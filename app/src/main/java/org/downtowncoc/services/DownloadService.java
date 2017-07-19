@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Environment;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -43,22 +44,25 @@ public class DownloadService extends IntentService
             NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(DownloadService.this);
 
             mBuilder.setSmallIcon(android.R.drawable.ic_popup_sync)
-                    .setContentTitle("Media Download")
-                    .setContentText("Download in progress...");
+                    .setContentTitle("Downloading...")
+                    .setContentText(intent.getStringExtra("filename"));
 
-            File cacheDir = new File(getCacheDir().getAbsolutePath(), "Sermons");
+            File cacheDir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "Sermons");
 
             if (!cacheDir.exists()){
-                cacheDir.mkdir();}
+                cacheDir.mkdir(); Log.d(LOG_TAG, cacheDir.getAbsolutePath() + " creating the directory");}
+            else{
+                Log.d(LOG_TAG, cacheDir.getAbsolutePath() + " not creating the directory");
+            }
 
-            File f = new File(getCacheDir().getAbsolutePath(), intent.getStringExtra("filename"));
+            File f = new File(cacheDir.getAbsolutePath(), intent.getStringExtra("filename"));
             URL url = new URL(intent.getStringExtra("download_url"));
-            // URLConnection connection = url.openConnection();
 
-            final HttpURLConnection c = (HttpURLConnection) url.openConnection();//Open Url Connection
-            c.setRequestMethod("GET");//Set Request Method to "GET" since we are getting data
-            c.connect();//connect the URL Connection
-            Log.d(LOG_TAG, getCacheDir().getAbsolutePath() + " connection content");
+            final HttpURLConnection c = (HttpURLConnection) url.openConnection();
+            c.setRequestMethod("GET");
+            c.connect();
+
+            Log.d(LOG_TAG, cacheDir.getAbsolutePath() + " connection content");
             Log.d(LOG_TAG, "connection length " + c.getContentLength());
 
             if (c.getResponseCode() != HttpURLConnection.HTTP_OK) {
@@ -67,7 +71,7 @@ public class DownloadService extends IntentService
             }
 
             //buffer size , 8192
-            InputStream input = new BufferedInputStream(c.getInputStream());
+            InputStream input = new BufferedInputStream(c.getInputStream(), 8192);
             OutputStream output = new FileOutputStream(f);
 
             byte data[] = new byte[1024];
