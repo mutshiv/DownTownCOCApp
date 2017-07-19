@@ -20,7 +20,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="@color/colorPrimary" />
+            android:background="@color/genericBlue"
+            android:longClickable="true"/>
 
     </LinearLayout>
+
+    <include
+        android:id="@+id/lv_custom"
+        layout="@layout/list_items_display_layout"
+        android:visibility="invisible"/>
+
 </FrameLayout>

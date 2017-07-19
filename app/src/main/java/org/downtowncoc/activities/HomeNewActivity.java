@@ -104,7 +104,9 @@ public class HomeNewActivity extends AppCompatActivity {
         }
         else {
             Toast.makeText(this, "Select data usage to watch videos.", Toast.LENGTH_LONG).show();
-        }
+        }/* intent = new Intent(this, FragmentsActivity.class);
+        intent.putExtra(Constants.ACTIVE_FRAGMENT, Constants.SERMON_FRAGMENT);
+        startActivity(intent);*/
     }
 
     @OnClick(R.id.audio)
@@ -120,13 +122,15 @@ public class HomeNewActivity extends AppCompatActivity {
         else if(mobile_stream_mode && !wifi_connected)
         {
             intent = new Intent(this, FragmentsActivity.class);
-            intent.putExtra(Constants.ACTIVE_FRAGMENT, Constants.SERMON_FRAGMENT);
+            intent.putExtra(Constants.ACTIVE_FRAGMENT, Constants.AUDIO_SERMON_FRAGMENT);
             startActivity(intent);
         }
         else
         {
             Toast.makeText(this, "Select data usage to listen to sermons.", Toast.LENGTH_LONG).show();
-        }
+        }/*intent = new Intent(this, FragmentsActivity.class);
+        intent.putExtra(Constants.ACTIVE_FRAGMENT, Constants.AUDIO_SERMON_FRAGMENT);
+        startActivity(intent);*/
     }
 
     @OnClick(R.id.events)

@@ -1,13 +1,18 @@
 package org.downtowncoc.fragments;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.util.Log;
@@ -16,18 +21,24 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.MediaController;
+import android.widget.TextView;
 
 import org.downtowncoc.R;
+import org.downtowncoc.customClasses.CustomCursorAdapter;
 import org.downtowncoc.database.DataBaseHelper;
 import org.downtowncoc.prefs.Constants;
+import org.downtowncoc.services.DownloadService;
 
 import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.OnItemClick;
+import butterknife.OnItemLongClick;
 
 public class AudioSermonFragment extends Fragment implements MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener, MediaController.MediaPlayerControl, SurfaceHolder.Callback
 {
@@ -39,16 +50,22 @@ public class AudioSermonFragment extends Fragment implements MediaPlayer.OnPrepa
     private String[] from = {Constants.Columns.FILE_NAME, Constants.Columns.FILE_NAME_FULL, Constants.Columns.MEDIA_TYPE, Constants.Columns.MEDIA_ID};
     private String where = Constants.Columns.MEDIA_TYPE + "=?";
     private String[] whereArgs = {"audio"};
-    @BindView(R.id.lv_audio_sermon)
-    ListView lv_audio_sermon;
     private MediaPlayer mediaPlayer;
     private MediaController mediaController;
-    @BindView(R.id.sv_audio_sermon)
-    SurfaceView sv_audio_sermon;
-
     private Uri soundUri;
     private String downloadUrl;
-    private int[] to = {android.R.id.text1};
+    //private int[] to = {android.R.id.text1};
+    private int[] to = {R.id.tvListItemName};
+
+    @BindView(R.id.lv_audio_sermon)
+    ListView lv_audio_sermon;
+    @BindView(R.id.lv_custom)
+    View lv_custom;
+    @BindView(R.id.sv_audio_sermon)
+    SurfaceView sv_audio_sermon;
+    @BindView(R.id.btnDownloadItem)
+    Button btnDownloadItem;
+    IncludedLayout includedLayout;
 
     public AudioSermonFragment() {
         // Required empty public constructor
@@ -65,14 +82,19 @@ public class AudioSermonFragment extends Fragment implements MediaPlayer.OnPrepa
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         View view = inflater.inflate(R.layout.fragment_audio_sermon, container, false);
+        View listView = inflater.inflate(R.layout.list_items_display_layout, container, false);
+        includedLayout = new IncludedLayout();
+
         ButterKnife.bind(this, view);
+        ButterKnife.bind(includedLayout, lv_custom);
 
         new Thread(new Runnable() {
             @Override
             public void run()
             {
                 mCursor = mDatabase.query(Constants.TABLE_NAME, from, where, whereArgs, null, null, null);
-                mAdapter = new SimpleCursorAdapter(AudioSermonFragment.super.getContext(), android.R.layout.simple_expandable_list_item_1, mCursor, from, to, 0);
+                //mAdapter = new SimpleCursorAdapter(AudioSermonFragment.super.getContext(), android.R.layout.simple_expandable_list_item_1, mCursor, from, to, 0);
+                mAdapter = new CustomCursorAdapter(AudioSermonFragment.super.getContext(), R.layout.list_items_display_layout, mCursor, from, to, 0);
                 lv_audio_sermon.setAdapter(mAdapter);
 
                 mediaPlayer = new MediaPlayer();
@@ -80,10 +102,60 @@ public class AudioSermonFragment extends Fragment implements MediaPlayer.OnPrepa
 
                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                 mediaPlayer.setWakeMode(AudioSermonFragment.super.getContext(), PowerManager.PARTIAL_WAKE_LOCK);
+
+                Button btn = includedLayout.btnDownload;
+                btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Log.d(LOG_TAG, "Button clicked");
+                    }
+                });
             }
         }).start();
 
+
+       /* btnDownloadItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(LOG_TAG, "Button clicked Exclusive!");
+            }
+        });
+*/
         return view;
+    }
+
+    public class IncludedLayout {
+        @BindView( R.id.btnDownloadItem )
+        Button btnDownload;
+        @BindView(R.id.tvListItemName)
+        TextView tvListItem;
+    }
+
+    @OnClick(R.id.btnDownloadItem)
+    public void onDownloadClick()
+    {
+        Log.d(LOG_TAG, "Download button clicked");
+    }
+
+    @OnItemLongClick(R.id.lv_audio_sermon)
+    public boolean downloadSelectedSermon(final int position)
+    {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if(isStoragePermissionGranted())
+                {
+                    mCursor.move(position);
+
+                    Intent downloadIntent = new Intent(getActivity(), DownloadService.class);
+                    downloadIntent.putExtra(Constants.DOWNLOAD_URL, (Constants.AUDIO_URI + mCursor.getString(mCursor.getColumnIndex(Constants.Columns.FILE_NAME_FULL))));
+                    downloadIntent.putExtra(Constants.DOWNLOAD_FILENAME, mCursor.getString(mCursor.getColumnIndex(Constants.Columns.FILE_NAME_FULL)));
+                    getActivity().startService(downloadIntent);
+                    Log.d(LOG_TAG, "Download " + position + " - " + (Constants.AUDIO_URI + mCursor.getString(mCursor.getColumnIndex(Constants.Columns.FILE_NAME_FULL))));
+                }
+            }
+        }).start();
+        return true;
     }
 
     @OnItemClick(R.id.lv_audio_sermon)
@@ -116,6 +188,24 @@ public class AudioSermonFragment extends Fragment implements MediaPlayer.OnPrepa
         }).start();
     }
 
+    public boolean isStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23)
+        {
+           if(ActivityCompat.checkSelfPermission(getContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                   == PackageManager.PERMISSION_GRANTED)
+            {
+                return true;
+            }
+            else
+           {
+               ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+               return true;
+           }
+        }
+        else
+        return true;
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -125,6 +215,8 @@ public class AudioSermonFragment extends Fragment implements MediaPlayer.OnPrepa
     public void onDetach() {
         mediaPlayer.stop();
         mediaPlayer.release();
+        mDatabase.close();
+        mDatabaaseHelper.close();
         super.onDetach();
     }
 

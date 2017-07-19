@@ -56,6 +56,8 @@ public class Constants
     public static final String WIFI_SYNC = "use_wifi";
     public static final String DATA_USAGE = "data_usage";
     public static final String WIFI_CONNECTED = "wifi_connected";
+    public static final String DOWNLOAD_FILENAME = "filename";
+    public static final String DOWNLOAD_URL = "download_url";
 
     public static int DATABASE_VERSION = 1;
 
