@@ -64,6 +64,7 @@ public class HomeNewActivity extends AppCompatActivity {
     private static boolean wi_fi_stream_mode;
     private static boolean mobile_stream_mode;
     private static boolean wifi_connected;
+    private static boolean connectivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +79,7 @@ public class HomeNewActivity extends AppCompatActivity {
         mobile_stream_mode = mSharedPreferences.getBoolean(Constants.DATA_USAGE, true);
         wi_fi_stream_mode = mSharedPreferences.getBoolean(Constants.WIFI_SYNC, false);
         wifi_connected = mSharedPreferences.getBoolean(Constants.WIFI_CONNECTED, false);
+        connectivity = mSharedPreferences.getBoolean(Constants.CONNECTIVITY, true);
     }
 
     @OnClick(R.id.aboutUs)
@@ -90,20 +92,20 @@ public class HomeNewActivity extends AppCompatActivity {
     @OnClick(R.id.videos)
     public void videosPage(View view)
     {
-        Log.d(LOG_TAG, mobile_stream_mode + " " + wi_fi_stream_mode + " " + wifi_connected);
-        if(wifi_connected ){
+        Log.d(LOG_TAG, connectivity + " connectivity " + mobile_stream_mode + " mobile " + wi_fi_stream_mode + " wi-fi " + wifi_connected);
+        if(wifi_connected && connectivity){
             intent = new Intent(this, FragmentsActivity.class);
             intent.putExtra(Constants.ACTIVE_FRAGMENT, Constants.SERMON_FRAGMENT);
             startActivity(intent);
         }
-        else if(mobile_stream_mode && !wi_fi_stream_mode)
+        else if(mobile_stream_mode && !wi_fi_stream_mode && connectivity)
         {
             intent = new Intent(this, FragmentsActivity.class);
             intent.putExtra(Constants.ACTIVE_FRAGMENT, Constants.SERMON_FRAGMENT);
             startActivity(intent);
         }
         else {
-            Toast.makeText(this, "Select data usage to watch videos.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "You device does not have network connectivity!", Toast.LENGTH_LONG).show();
         }/* intent = new Intent(this, FragmentsActivity.class);
         intent.putExtra(Constants.ACTIVE_FRAGMENT, Constants.SERMON_FRAGMENT);
         startActivity(intent);*/
@@ -112,14 +114,14 @@ public class HomeNewActivity extends AppCompatActivity {
     @OnClick(R.id.audio)
     public void audioPage(View view)
     {
-        Log.d(LOG_TAG, mobile_stream_mode + " " + wi_fi_stream_mode + " " + wifi_connected);
-        if(wifi_connected && wi_fi_stream_mode){
+        Log.d(LOG_TAG, connectivity + " connectivity " + mobile_stream_mode + " mobile " + wi_fi_stream_mode + " wi-fi " + wifi_connected);
+        if(wifi_connected && connectivity){
             Log.d(LOG_TAG, "wi-fi data");
             intent = new Intent(this, FragmentsActivity.class);
             intent.putExtra(Constants.ACTIVE_FRAGMENT, Constants.AUDIO_SERMON_FRAGMENT);
             startActivity(intent);
         }
-        else if(mobile_stream_mode && !wifi_connected)
+        else if(mobile_stream_mode && !wifi_connected && connectivity)
         {
             intent = new Intent(this, FragmentsActivity.class);
             intent.putExtra(Constants.ACTIVE_FRAGMENT, Constants.AUDIO_SERMON_FRAGMENT);
@@ -127,8 +129,9 @@ public class HomeNewActivity extends AppCompatActivity {
         }
         else
         {
-            Toast.makeText(this, "Select data usage to listen to sermons.", Toast.LENGTH_LONG).show();
-        }/*intent = new Intent(this, FragmentsActivity.class);
+            Toast.makeText(this, "You device does not have network connectivity!", Toast.LENGTH_LONG).show();
+        }
+        /*intent = new Intent(this, FragmentsActivity.class);
         intent.putExtra(Constants.ACTIVE_FRAGMENT, Constants.AUDIO_SERMON_FRAGMENT);
         startActivity(intent);*/
     }
@@ -230,6 +233,22 @@ public class HomeNewActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(LOG_TAG, "on resume setting data usage");
+        mobile_stream_mode = mSharedPreferences.getBoolean(Constants.DATA_USAGE, true);
+        wi_fi_stream_mode = mSharedPreferences.getBoolean(Constants.WIFI_SYNC, false);
+        wifi_connected = mSharedPreferences.getBoolean(Constants.WIFI_CONNECTED, false);
+        connectivity = mSharedPreferences.getBoolean(Constants.CONNECTIVITY, true);
+
+
+        Log.d(LOG_TAG, "Wi-fi sync " + mSharedPreferences.getBoolean(Constants.WIFI_SYNC, false) + "\nUse wi-fi data " +
+                mSharedPreferences.getBoolean(Constants.WIFI_CONNECTED, false) +
+                "\nData on? " + mSharedPreferences.getBoolean(Constants.DATA_USAGE, false)
+                + "\nConnectivity " + mSharedPreferences.getBoolean(Constants.CONNECTIVITY, true));
     }
 
     public void showCodeAlert()

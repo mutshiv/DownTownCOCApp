@@ -54,16 +54,21 @@ public class PreferencesActivity extends AppCompatActivity {
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     if (preference.isEnabled() && newValue.equals(true)) {
                         preference.setTitle("Stream over Wi-fi");
-                        mSharedPreferences.edit().putBoolean(Constants.WIFI_SYNC, true).apply();
-                        mSharedPreferences.edit().putBoolean(Constants.DATA_USAGE, false).apply();
+                        mSharedPreferences.edit().putBoolean(Constants.WIFI_SYNC, true)
+                                                .putBoolean(Constants.DATA_USAGE, false).apply();
+
+                        Log.d(LOG_TAG, mSharedPreferences.getBoolean(Constants.WIFI_SYNC, preference.isEnabled()) + " Use wi-fi data *" +
+                                mSharedPreferences.getBoolean(Constants.WIFI_CONNECTED, (Boolean) newValue) +
+                                "* wi-fi data on? " + mSharedPreferences.getBoolean(Constants.DATA_USAGE, preference.isEnabled()));
                         return true;
                     }
                     else if (preference.isEnabled() && newValue.equals(false)) {
                         preference.setTitle("Stream using Mobile Data");
                         mSharedPreferences.edit().putBoolean(Constants.WIFI_SYNC, false)
-                                                 .putBoolean(Constants.WIFI_CONNECTED, false)
+                                                 .putBoolean(Constants.DATA_USAGE, true)
                                                  .putBoolean(Constants.WIFI_CONNECTED, false).apply();
-                        Log.d(LOG_TAG, mSharedPreferences.getBoolean(Constants.WIFI_SYNC, preference.isEnabled()) + " Use Mobile data *" + mSharedPreferences.getBoolean(Constants.WIFI_CONNECTED, preference.isEnabled()) +
+                        Log.d(LOG_TAG, mSharedPreferences.getBoolean(Constants.WIFI_SYNC, preference.isEnabled()) + " Use Mobile data *" +
+                                mSharedPreferences.getBoolean(Constants.WIFI_CONNECTED, (Boolean) newValue) +
                                 "* mobile data on? " + mSharedPreferences.getBoolean(Constants.DATA_USAGE, preference.isEnabled()));
                         return true;
                     }
@@ -72,10 +77,4 @@ public class PreferencesActivity extends AppCompatActivity {
             });
         }
     }
-
-/*    public boolean checkWifiConnection()
-    {
-        if(activeNetworkInfo.isConnected())return true;
-        return false;
-    }*/
 }

@@ -60,17 +60,20 @@ public class SplashScreenActivity extends AppCompatActivity
                         if(mSharedPreferences.getBoolean(Constants.WIFI_SYNC, false))
                         {
                             Log.d(LOG_TAG, mSharedPreferences.getBoolean(Constants.WIFI_SYNC, false) + " false mean true");
-                            mSharedPreferences.edit().putBoolean(Constants.WIFI_CONNECTED, true).apply();
+                            mSharedPreferences.edit().putBoolean(Constants.WIFI_CONNECTED, true)
+                                    .putBoolean(Constants.CONNECTIVITY, false).apply();
                         }
                         else
                         {
                             Log.d(LOG_TAG, mSharedPreferences.getBoolean(Constants.WIFI_SYNC, true) + " true is false");
-                            mSharedPreferences.edit().putBoolean(Constants.DATA_USAGE, true).apply();
+                            mSharedPreferences.edit().putBoolean(Constants.DATA_USAGE, true)
+                                    .putBoolean(Constants.CONNECTIVITY, false).apply();
                         }
                     }
                     else if (activeNetworkInfo.isConnected() && activeNetworkInfo.getType() == ConnectivityManager.TYPE_MOBILE)
                     {
-                        mSharedPreferences.edit().putBoolean(Constants.DATA_USAGE, false).apply();
+                        mSharedPreferences.edit().putBoolean(Constants.DATA_USAGE, true)
+                                .putBoolean(Constants.CONNECTIVITY, false).apply();
                     }
                 }
 

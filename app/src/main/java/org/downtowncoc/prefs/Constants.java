@@ -43,6 +43,7 @@ public class Constants
     //public static final String NOTICES_URL = "http://10.2.0.17:3000/";
     //public static final String NOTICES_URL = "http://192.168.1.103:3000/";
     public static final String NOTICES_URL = "https://guarded-retreat-35646.herokuapp.com";
+    private static final String CALENDAR_URL = "https://calendar.google.com/calendar/ical/pdtcoc%40gmail.com/public/basic.ics";
     public static final String NOTICE_MSG = "noticemsg";
     public static final String ACTION_BROADCAST_INCOMING_NOTIFICATION = "org.downtowncoc.ACTION_BROADCAST_INCOMING_NOTIFICATION";
     public static final String DEVICE_ID = "deviceID";
@@ -58,6 +59,7 @@ public class Constants
     public static final String WIFI_CONNECTED = "wifi_connected";
     public static final String DOWNLOAD_FILENAME = "filename";
     public static final String DOWNLOAD_URL = "download_url";
+    public static final String CONNECTIVITY = "connectivity";
 
     public static int DATABASE_VERSION = 1;
 
